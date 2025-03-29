@@ -6,10 +6,12 @@ import com.mk.core.domain.repository.CryptoSphereRepository
 import com.mk.core.domain.usecase.DecryptAffineCipherUseCase
 import com.mk.core.domain.usecase.DecryptAutoKeyVigenereCipherUseCase
 import com.mk.core.domain.usecase.DecryptExtendedVigereCipherUseCase
+import com.mk.core.domain.usecase.DecryptPlayfairCipherUseCase
 import com.mk.core.domain.usecase.DecryptVigenereCipherUseCase
 import com.mk.core.domain.usecase.EncryptAffineCipherUseCase
 import com.mk.core.domain.usecase.EncryptAutoKeyVigenereCipherUseCase
 import com.mk.core.domain.usecase.EncryptExtendedVigereCipherUseCase
+import com.mk.core.domain.usecase.EncryptPlayfairCipherUseCase
 import com.mk.core.domain.usecase.EncryptVigenereCipherUseCase
 import dagger.Module
 import dagger.Provides
@@ -60,4 +62,12 @@ object ModuleApp {
     @Provides
     fun provideDecryptAffineCipherUseCase(cryptoSphereRepository: CryptoSphereRepository) =
         DecryptAffineCipherUseCase(cryptoSphereRepository)
+
+    @Provides
+    fun provideEncryptPlayfairCipherUseCase(cryptoSphereRepository: CryptoSphereRepository) =
+        EncryptPlayfairCipherUseCase(cryptoSphereRepository)
+
+    @Provides
+    fun provideDecryptPlayfairCipherUseCase(cryptoSphereRepository: CryptoSphereRepository) =
+        DecryptPlayfairCipherUseCase(cryptoSphereRepository)
 }

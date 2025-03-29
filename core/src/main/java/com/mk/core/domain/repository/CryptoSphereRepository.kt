@@ -16,4 +16,7 @@ interface CryptoSphereRepository {
 
     fun encryptAffineCipher(plaintext: String, key: Pair<Int, Int>): Flow<ResultState<String>>
     fun decryptAffineCipher(ciphertext: String, key: Pair<Int, Int>): Flow<ResultState<String>>
+
+    fun encryptPlayfairCipher(plaintext: String, key: String): Flow<ResultState<String>>
+    fun decryptPlayfairCipher(ciphertext: String, key: String): Flow<ResultState<String>>
 }

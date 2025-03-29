@@ -6,6 +6,7 @@ import android.util.Log
 import com.mk.core.algorithm.AffineCipher
 import com.mk.core.algorithm.AutoKeyVigenereCipher
 import com.mk.core.algorithm.ExtendedVigenereCipher
+import com.mk.core.algorithm.PlayfairCipher
 import com.mk.core.algorithm.VigenereCipher
 import com.mk.core.domain.model.ResultState
 import com.mk.core.domain.repository.CryptoSphereRepository
@@ -149,6 +150,36 @@ class CryptoSphereRepositoryImpl(
                 emit(ResultState.Success(plaintext))
             } catch (e: Exception) {
                 Log.e(TAG, "decryptAffineCipher: Error during decryption", e)
+                emit(ResultState.Error(e.message ?: "Unknown Error"))
+            }
+        }
+    }
+
+    override fun encryptPlayfairCipher(
+        plaintext: String,
+        key: String
+    ): Flow<ResultState<String>> {
+        return flow {
+            emit(ResultState.Loading)
+            try {
+                val ciphertext = PlayfairCipher.encrypt(plaintext, key)
+                emit(ResultState.Success(ciphertext))
+            } catch (e: Exception) {
+                emit(ResultState.Error(e.message ?: "Unknown Error"))
+            }
+        }
+    }
+
+    override fun decryptPlayfairCipher(
+        ciphertext: String,
+        key: String
+    ): Flow<ResultState<String>> {
+        return flow {
+            emit(ResultState.Loading)
+            try {
+                val plaintext = PlayfairCipher.decrypt(ciphertext, key)
+                emit(ResultState.Success(plaintext))
+            } catch (e: Exception) {
                 emit(ResultState.Error(e.message ?: "Unknown Error"))
             }
         }
