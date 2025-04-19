@@ -38,7 +38,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ExtendedVigereCipherScreen(
-    viewmodel: ExtendedVigereCipherViewModel = hiltViewModel()
+    viewmodel: ExtendedVigereCipherViewModel = hiltViewModel(),
+    onBackClick: () -> Unit,
 ) {
 
     val sheetState = rememberModalBottomSheetState()
@@ -59,7 +60,9 @@ fun ExtendedVigereCipherScreen(
             TopAppBar(
                 navigationIcon =  {
                     IconButton(
-                        onClick = {  }
+                        onClick = {
+                            onBackClick()
+                        }
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_arrow_back_24),

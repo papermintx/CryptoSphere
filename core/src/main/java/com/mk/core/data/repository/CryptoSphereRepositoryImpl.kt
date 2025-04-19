@@ -3,18 +3,23 @@ package com.mk.core.data.repository
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.sqlite.db.SupportSQLiteProgram
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.mk.core.algorithm.AffineCipher
 import com.mk.core.algorithm.AutoKeyVigenereCipher
 import com.mk.core.algorithm.ExtendedVigenereCipher
 import com.mk.core.algorithm.PlayfairCipher
 import com.mk.core.algorithm.VigenereCipher
+import com.mk.core.data.room.dao.EncryptDao
+import com.mk.core.data.room.model.EncryptEntity
 import com.mk.core.domain.model.ResultState
 import com.mk.core.domain.repository.CryptoSphereRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class CryptoSphereRepositoryImpl(
-    private val context: Context
+    private val context: Context,
+    private val encryptDao: EncryptDao
 ): CryptoSphereRepository {
     override fun encryptFile(inputUri: Uri, key: String): Flow<ResultState<Uri>> {
        return flow {
@@ -56,7 +61,7 @@ class CryptoSphereRepositoryImpl(
         }
     }
 
-    override fun encryptVigereCipher(
+    override fun encryptVigenereCipher(
         plaintext: String,
         key: String
     ): Flow<ResultState<String>> {
@@ -71,7 +76,7 @@ class CryptoSphereRepositoryImpl(
         }
     }
 
-    override fun decryptVigereCipher(
+    override fun decryptVigenereCipher(
         ciphertext: String,
         key: String
     ): Flow<ResultState<String>> {
@@ -89,7 +94,7 @@ class CryptoSphereRepositoryImpl(
         }
     }
 
-    override fun encryptAutoKeyVigereCipher(
+    override fun encryptAutoKeyVigenereCipher(
         plaintext: String,
         key: String
     ): Flow<ResultState<String>> {
@@ -104,7 +109,7 @@ class CryptoSphereRepositoryImpl(
         }
     }
 
-    override fun decryptAutoKeyVigereCipher(
+    override fun decryptAutoKeyVigenereCipher(
         ciphertext: String,
         key: String
     ): Flow<ResultState<String>> {
@@ -182,6 +187,49 @@ class CryptoSphereRepositoryImpl(
             } catch (e: Exception) {
                 emit(ResultState.Error(e.message ?: "Unknown Error"))
             }
+        }
+    }
+
+    override suspend fun insertHistory(entity: EncryptEntity) {
+        try {
+            encryptDao.insertEncrypt(entity)
+        } catch (e: Exception){
+            Log.e(TAG, "insertHistory: $e" )
+        }
+    }
+
+
+    override fun getHistoryByCipher(
+        cipherName: String,
+        sortedDesc: Boolean
+    ): Flow<List<EncryptEntity>> {
+        val query = object : SupportSQLiteQuery {
+            override val argCount: Int
+                get() =1
+            override val sql: String
+                get() = "SELECT * FROM encrypt_table WHERE cipherName = ? ORDER BY createdAt ${if (sortedDesc) "DESC" else "ASC"}"
+
+            override fun bindTo(statement: SupportSQLiteProgram) {
+                statement.bindString(1, cipherName)
+            }
+        }
+
+        return encryptDao.getSortedHistory(query)
+    }
+
+    override suspend fun deleteHistoryById(id: Int) {
+        try {
+            encryptDao.deleteById(id)
+        } catch (e: Exception){
+            Log.e(TAG, "deleteHistoryById: $e" )
+        }
+    }
+
+    override suspend fun deleteHistoryByCipher(cipherName: String) {
+        try {
+            encryptDao.deleteByCipher(cipherName)
+        } catch (e: Exception){
+            Log.e(TAG, "deleteHistoryByCipher: $e" )
         }
     }
 

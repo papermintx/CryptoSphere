@@ -48,7 +48,6 @@ dependencies {
     implementation(libs.dagger.hilt)
     ksp(libs.dagger.ksp)
 
-
     // Room
     implementation(libs.room)
     implementation(libs.room.ktx)

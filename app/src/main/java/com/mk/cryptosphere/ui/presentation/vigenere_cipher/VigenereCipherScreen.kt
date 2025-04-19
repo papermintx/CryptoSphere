@@ -2,6 +2,9 @@ package com.mk.cryptosphere.ui.presentation.vigenere_cipher
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,14 +12,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,15 +35,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mk.core.domain.model.ResultState
+import com.mk.core.utils.CipherAlgorithm
 import com.mk.cryptosphere.R
 import com.mk.cryptosphere.ui.presentation.components.BottomSheet
 import com.mk.cryptosphere.ui.presentation.components.CustomButtonTwo
+import com.mk.cryptosphere.ui.presentation.components.HistoryItem
 import com.mk.cryptosphere.ui.presentation.components.ShowDialog
 import com.mk.cryptosphere.utils.readFileContent
 import kotlinx.coroutines.launch
@@ -40,13 +55,19 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VigenereCipherScreen(
-    viewModel: VigenereCipherViewModel = hiltViewModel()
+    viewModel: VigenereCipherViewModel = hiltViewModel(),
+    onBackClick: () -> Unit
 ) {
 
+    var sortDescending by remember { mutableStateOf(true) }
     var showDialogResult by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
+
+    LaunchedEffect(sortDescending) {
+        viewModel.getHistory(CipherAlgorithm.VIGENERE_CIPHER.toString(), sortDescending)
+    }
 
     val sheetState2 = rememberModalBottomSheetState()
     var showBottomSheet2 by remember { mutableStateOf(false) }
@@ -70,15 +91,31 @@ fun VigenereCipherScreen(
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    val historyState by viewModel.historyState.collectAsStateWithLifecycle()
+
     Scaffold(
         topBar = {
             TopAppBar(
                 navigationIcon =  {
                     IconButton(
-                        onClick = {  }
+                        onClick = {
+                            onBackClick()
+                        }
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                            contentDescription = null
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            sortDescending = !sortDescending
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_sort_24),
                             contentDescription = null
                         )
                     }
@@ -119,8 +156,14 @@ fun VigenereCipherScreen(
                         key = data.key,
                         ciphertext = data.ciphertext,
                         isDecrypt = data.isDecrypt,
+                        onSaveToHistory = {
+                            if (it){
+                                viewModel.saveHistory()
+                            }
+                        }
                     )
                 }
+                ResultState.NothingData -> {}
             }
             Column(
                 modifier = Modifier.fillMaxSize()
@@ -159,6 +202,79 @@ fun VigenereCipherScreen(
                     },
                     icon = R.drawable.baseline_attach_file_24
                 )
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(2f)
+                        .fillMaxWidth()
+                ) {
+                    when(historyState){
+                        is ResultState.Loading -> {
+
+                        }
+                        is ResultState.Success -> {
+                            val history = (historyState as ResultState.Success).data
+                            if(history.isEmpty()){
+                                item {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxSize(),
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        Text(
+                                            text = "No History",
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(16.dp),
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                }
+                            } else {
+                                items(history, key = { it.id }) { item ->
+                                    HistoryItem(
+                                        entity = item,
+                                        onDeleteClick = {
+                                            viewModel.deleteHistory(item.id)
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 4.dp)
+                                            .animateItem(
+                                                fadeInSpec =  tween(300),
+                                                placementSpec =  tween(300),
+                                                fadeOutSpec =  tween(300),
+                                            )
+                                    )
+                                }
+
+                            }
+                        }
+                        is ResultState.Error -> {
+                            item {
+                                Text(
+                                    text = "Failed to load history",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                        ResultState.Idle, ResultState.NothingData -> {
+                            item {
+                                Text(
+                                    text = "No History",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
+                }
+
             }
 
             BottomSheet(

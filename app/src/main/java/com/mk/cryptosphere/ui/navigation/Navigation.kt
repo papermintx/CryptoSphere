@@ -12,6 +12,7 @@ import com.mk.cryptosphere.ui.presentation.affine_cipher.AffineCipherScreen
 import com.mk.cryptosphere.ui.presentation.auto_key_vigenere_cipher.AutoKeyVigenereCipherScreen
 import com.mk.cryptosphere.ui.presentation.extended_vigenere_cipher.ExtendedVigereCipherScreen
 import com.mk.cryptosphere.ui.presentation.home.HomeScreen
+import com.mk.cryptosphere.ui.presentation.playfair_cipher.PlayfairCipherScreen
 import com.mk.cryptosphere.ui.presentation.vigenere_cipher.VigenereCipherScreen
 
 @Composable
@@ -42,6 +43,9 @@ fun Navigation(
                 },
                 goAFC = {
                     navController.navigate(NavScreen.AFC.route)
+                },
+                goPLC = {
+                    navController.navigate(NavScreen.PLC.route)
                 }
             )
         }
@@ -51,7 +55,9 @@ fun Navigation(
             enterTransition = { fadeIn(animationSpec = tween(300)) },
             exitTransition = { fadeOut(animationSpec = tween(300)) }
         ) {
-            ExtendedVigereCipherScreen()
+            ExtendedVigereCipherScreen{
+                navController.popBackStack()
+            }
         }
 
         composable(
@@ -59,15 +65,32 @@ fun Navigation(
             enterTransition = { fadeIn(animationSpec = tween(300)) },
             exitTransition = { fadeOut(animationSpec = tween(300)) }
         ) {
-            VigenereCipherScreen()
+            VigenereCipherScreen {
+                navController.popBackStack()
+            }
         }
+
+        composable(
+            NavScreen.PLC.route,
+            enterTransition = { fadeIn(animationSpec = tween(300)) },
+            exitTransition = { fadeOut(animationSpec = tween(300)) }
+        ) {
+            PlayfairCipherScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
 
         composable(
             NavScreen.AKVC.route,
             enterTransition = { fadeIn(animationSpec = tween(300)) },
             exitTransition = { fadeOut(animationSpec = tween(300)) }
         ) {
-            AutoKeyVigenereCipherScreen()
+            AutoKeyVigenereCipherScreen{
+                navController.popBackStack()
+            }
         }
 
         composable(
@@ -75,8 +98,9 @@ fun Navigation(
             enterTransition = { fadeIn(animationSpec = tween(300)) },
             exitTransition = { fadeOut(animationSpec = tween(300)) }
         ) {
-            AffineCipherScreen(
-            )
+            AffineCipherScreen{
+                navController.popBackStack()
+            }
         }
     }
 }

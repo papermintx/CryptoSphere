@@ -34,6 +34,7 @@ import com.mk.core.domain.model.ResultState
 import com.mk.cryptosphere.R
 import com.mk.cryptosphere.ui.presentation.components.BottomSheet
 import com.mk.cryptosphere.ui.presentation.components.CustomButtonTwo
+import com.mk.cryptosphere.ui.presentation.components.ErrorDialog
 import com.mk.cryptosphere.ui.presentation.components.ShowDialog
 import com.mk.cryptosphere.utils.readFileContent
 import kotlinx.coroutines.launch
@@ -41,10 +42,12 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AffineCipherScreen(
-    viewModel: AffineCipherViewMode = hiltViewModel()
+    viewModel: AffineCipherViewMode = hiltViewModel(),
+    onBackClick: () -> Unit,
 ) {
 
     var showDialogResult by remember { mutableStateOf(false) }
+    var showErrorDialog by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -76,7 +79,9 @@ fun AffineCipherScreen(
             TopAppBar(
                 navigationIcon =  {
                     IconButton(
-                        onClick = {  }
+                        onClick = {
+                            onBackClick()
+                        }
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_arrow_back_24),
@@ -86,7 +91,7 @@ fun AffineCipherScreen(
                 },
                 title = {
                     Text(
-                        text = "Auto Key Vigenere Cipher",
+                        text = "Affine Cipher",
                         modifier = Modifier.padding(8.dp),
                     )
                 }
@@ -100,7 +105,12 @@ fun AffineCipherScreen(
         ) {
             when (state) {
                 is ResultState.Error -> {
-
+                    val errorMessage = (state as ResultState.Error).message
+                    ErrorDialog(
+                        errorMessage = errorMessage
+                    ) {
+                        viewModel.resetState()
+                    }
                 }
 
                 ResultState.Idle -> {
@@ -125,6 +135,8 @@ fun AffineCipherScreen(
                         isDecrypt = data.isDecrypt,
                     )
                 }
+
+                ResultState.NothingData -> {}
             }
             Column(
                 modifier = Modifier.fillMaxSize()

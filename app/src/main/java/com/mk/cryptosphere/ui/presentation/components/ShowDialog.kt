@@ -5,16 +5,17 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -42,10 +43,13 @@ fun ShowDialog(
     modifier: Modifier = Modifier,
     showDialog: Boolean,
     onDismissRequest: () -> Unit,
+    onSaveToHistory: (Boolean) -> Unit = {},
     plaintext: String,
     key: String,
     ciphertext: String
 ) {
+    var saveToHistory by remember { mutableStateOf(false) }
+
     if (showDialog) {
         val clipboardManager: ClipboardManager = LocalClipboardManager.current
         val context = LocalContext.current
@@ -59,35 +63,37 @@ fun ShowDialog(
             uri?.let {
                 coroutineScope.launch {
                     val success = saveCiphertextToFile(context, it, ciphertext)
-                    if (success) {
-                        Toast.makeText(context, "Ciphertext successfully saved", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, "Failed to save ciphertext", Toast.LENGTH_SHORT).show()
-                    }
+                    Toast.makeText(
+                        context,
+                        if (success) "Ciphertext successfully saved" else "Failed to save ciphertext",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
 
         AlertDialog(
             modifier = modifier,
-            onDismissRequest = { onDismissRequest() },
-            title = { Text("${if (isDecrypt) "Decryption" else "Encryption"} Result") },
+            onDismissRequest = onDismissRequest,
+            title = {
+                Text("${if (isDecrypt) "Decryption" else "Encryption"} Result")
+            },
             text = {
-                Column(
-                    modifier = Modifier.verticalScroll(rememberScrollState())
-                ) {
-                    if (isDecrypt){
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text("Plaintext: $plaintext",  modifier = Modifier.weight(2f))
-                            Spacer(Modifier.width(4.dp))
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    if (isDecrypt) {
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = "Plaintext: $plaintext",
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .padding(end = 40.dp)
+                            )
                             IconButton(
                                 onClick = {
-                                    clipboardManager.setText(AnnotatedString(ciphertext))
+                                    clipboardManager.setText(AnnotatedString(plaintext))
                                     Toast.makeText(context, "Copy Plaintext Success", Toast.LENGTH_SHORT).show()
-                                }
+                                },
+                                modifier = Modifier.align(Alignment.CenterEnd)
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.baseline_content_copy_24),
@@ -98,21 +104,24 @@ fun ShowDialog(
                     } else {
                         Text("Plaintext: $plaintext")
                     }
+
                     Spacer(modifier = Modifier.height(8.dp))
                     Text("Key: $key")
-                    Spacer(modifier = Modifier.height(8.dp))
+
                     if (!isDecrypt) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text("Ciphertext: $ciphertext", modifier = Modifier.weight(2f))
-                            Spacer(Modifier.width(4.dp))
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = "Ciphertext: $ciphertext",
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .padding(end = 40.dp)
+                            )
                             IconButton(
                                 onClick = {
                                     clipboardManager.setText(AnnotatedString(ciphertext))
                                     Toast.makeText(context, "Copy Ciphertext Success", Toast.LENGTH_SHORT).show()
-                                }
+                                },
+                                modifier = Modifier.align(Alignment.CenterEnd)
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.baseline_content_copy_24),
@@ -120,19 +129,37 @@ fun ShowDialog(
                                 )
                             }
                         }
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Checkbox(
+                                checked = saveToHistory,
+                                onCheckedChange = { saveToHistory = it }
+                            )
+                            Text("Simpan ke history")
+                        }
                     } else {
                         Text("Ciphertext: $ciphertext")
                     }
                 }
             },
             dismissButton = {
-                Button(onClick = { onDismissRequest() }) {
+                Button(onClick = {
+                    if (saveToHistory) {
+                        onSaveToHistory(true)
+                    }
+                    onDismissRequest()
+                }) {
                     Text("OK")
                 }
             },
             confirmButton = {
                 if (!isDecrypt) {
-                    Button(onClick = { outputFilePickerLauncher.launch("ciphertext_${System.currentTimeMillis()}.txt") }) {
+                    Button(onClick = {
+                        outputFilePickerLauncher.launch("ciphertext_${System.currentTimeMillis()}.txt")
+                    }) {
                         Text("Save")
                     }
                 }
@@ -140,6 +167,7 @@ fun ShowDialog(
         )
     }
 }
+
 
 fun saveCiphertextToFile(context: Context, outputUri: Uri, ciphertext: String): Boolean {
     return try {

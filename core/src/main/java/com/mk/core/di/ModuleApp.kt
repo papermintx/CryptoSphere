@@ -1,18 +1,26 @@
 package com.mk.core.di
 
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase
+import androidx.room.Database
+import androidx.room.Room
 import com.mk.core.data.repository.CryptoSphereRepositoryImpl
+import com.mk.core.data.room.CryptoSphereDatabase
+import com.mk.core.data.room.dao.EncryptDao
 import com.mk.core.domain.repository.CryptoSphereRepository
 import com.mk.core.domain.usecase.DecryptAffineCipherUseCase
 import com.mk.core.domain.usecase.DecryptAutoKeyVigenereCipherUseCase
 import com.mk.core.domain.usecase.DecryptExtendedVigereCipherUseCase
 import com.mk.core.domain.usecase.DecryptPlayfairCipherUseCase
 import com.mk.core.domain.usecase.DecryptVigenereCipherUseCase
+import com.mk.core.domain.usecase.DeleteHistoryUseCase
 import com.mk.core.domain.usecase.EncryptAffineCipherUseCase
 import com.mk.core.domain.usecase.EncryptAutoKeyVigenereCipherUseCase
 import com.mk.core.domain.usecase.EncryptExtendedVigereCipherUseCase
 import com.mk.core.domain.usecase.EncryptPlayfairCipherUseCase
 import com.mk.core.domain.usecase.EncryptVigenereCipherUseCase
+import com.mk.core.domain.usecase.GetHistoryUseCase
+import com.mk.core.domain.usecase.InsertHistoryUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,8 +34,26 @@ object ModuleApp {
 
     @Provides
     @Singleton
-    fun provideCryptoSphereRepository(@ApplicationContext context: Context): CryptoSphereRepository {
-        return CryptoSphereRepositoryImpl(context)
+    fun provideStoryDatabase(@ApplicationContext context: Context): CryptoSphereDatabase {
+        return Room.databaseBuilder(
+            context.applicationContext,
+            CryptoSphereDatabase::class.java,
+            "database"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+    }
+
+    @Provides
+    fun provideEncryptDao(database: CryptoSphereDatabase): EncryptDao {
+        return database.encryptDao()
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideCryptoSphereRepository(@ApplicationContext context: Context, encryptDao: EncryptDao): CryptoSphereRepository {
+        return CryptoSphereRepositoryImpl(context, encryptDao)
     }
 
     @Provides
@@ -70,4 +96,16 @@ object ModuleApp {
     @Provides
     fun provideDecryptPlayfairCipherUseCase(cryptoSphereRepository: CryptoSphereRepository) =
         DecryptPlayfairCipherUseCase(cryptoSphereRepository)
+
+    @Provides
+    fun provideInsertEncryptUseCase(cryptoSphereRepository: CryptoSphereRepository) =
+        InsertHistoryUseCase(cryptoSphereRepository)
+
+    @Provides
+    fun provideGetEncryptUseCase(cryptoSphereRepository: CryptoSphereRepository) =
+        GetHistoryUseCase(cryptoSphereRepository)
+
+    @Provides
+    fun provideDeleteEncryptUseCase(cryptoSphereRepository: CryptoSphereRepository) =
+        DeleteHistoryUseCase(cryptoSphereRepository)
 }

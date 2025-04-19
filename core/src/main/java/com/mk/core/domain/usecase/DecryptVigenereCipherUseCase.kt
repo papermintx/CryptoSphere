@@ -6,5 +6,5 @@ class DecryptVigenereCipherUseCase (
     private val cryptoSphereRepository: CryptoSphereRepository
 ){
 
-    operator fun invoke(ciphertext: String, key: String) = cryptoSphereRepository.decryptVigereCipher(ciphertext, key)
+    operator fun invoke(ciphertext: String, key: String) = cryptoSphereRepository.decryptVigenereCipher(ciphertext, key)
 }

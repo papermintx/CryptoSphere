@@ -9,13 +9,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.mk.core.utils.CipherAlgorithm
+import com.mk.cryptosphere.R
 import com.mk.cryptosphere.ui.presentation.components.ButtonCustom
 import com.mk.cryptosphere.ui.presentation.components.CardHome
 
@@ -27,6 +31,7 @@ fun HomeScreen(
     goAKVC: () -> Unit,
     goVC: () -> Unit,
     goAFC: () -> Unit,
+    goPLC: () -> Unit,
 ) {
     val algorithm = CipherAlgorithm.entries
 
@@ -38,6 +43,16 @@ fun HomeScreen(
                         text = "CryptoSphere",
                         modifier = Modifier.padding(8.dp),
                     )
+                },
+                actions = {
+                    IconButton(
+                        onClick = {}
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.baseline_info_24),
+                            contentDescription = null
+                        )
+                    }
                 }
             )
         },
@@ -77,6 +92,9 @@ fun HomeScreen(
                                 }
                                 if (it.toString() == CipherAlgorithm.AFFINE_CIPHER.toString() ){
                                     goAFC()
+                                }
+                                if (it.toString() == CipherAlgorithm.PLAYFAIR_CIPHER.toString() ){
+                                    goPLC()
                                 }
                             }
                         )

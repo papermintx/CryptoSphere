@@ -5,5 +5,5 @@ import com.mk.core.domain.repository.CryptoSphereRepository
 class DecryptAutoKeyVigenereCipherUseCase(
     private val repository: CryptoSphereRepository
 ) {
-    operator fun invoke(ciphertext: String, key: String) = repository.decryptAutoKeyVigereCipher(ciphertext, key)
+    operator fun invoke(ciphertext: String, key: String) = repository.decryptAutoKeyVigenereCipher(ciphertext, key)
 }

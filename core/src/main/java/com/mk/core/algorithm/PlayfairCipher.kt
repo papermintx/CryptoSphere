@@ -1,32 +1,40 @@
 package com.mk.core.algorithm
 
 object PlayfairCipher {
-    private const val ALPHABET = "ABCDEFGHIKLMNOPQRSTUVWXYZ"
+    private const val ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
     private fun prepareKey(key: String): Array<CharArray> {
-        val keyString = (key.uppercase().replace("J", "I") + ALPHABET)
+        val keyString = (key.uppercase().filter { it in ALPHABET } + ALPHABET)
             .toSet().joinToString("")
         return Array(5) { row -> CharArray(5) { col -> keyString[row * 5 + col] } }
     }
 
     private fun prepareText(text: String): String {
-        val cleanText = text.uppercase().replace("J", "I").filter { it in ALPHABET }
+        val cleanText = text.uppercase()
+            .filter { it in ALPHABET }
+
         val result = StringBuilder()
         var i = 0
         while (i < cleanText.length) {
-            result.append(cleanText[i])
-            if (i + 1 < cleanText.length && cleanText[i] == cleanText[i + 1]) {
+            val a = cleanText[i]
+            val b = if (i + 1 < cleanText.length) cleanText[i + 1] else 'X'
+
+            if (a == b) {
+                result.append(a)
                 result.append('X')
-            }
-            if (i + 1 < cleanText.length) {
-                result.append(cleanText[i + 1])
+                i++
             } else {
-                result.append('X')
+                result.append(a)
+                result.append(b)
+                i += 2
             }
-            i += 2
         }
+
+        if (result.length % 2 != 0) result.append("X")
+
         return result.toString()
     }
+
 
     private fun findPosition(matrix: Array<CharArray>, char: Char): Pair<Int, Int> {
         for (i in matrix.indices) {
@@ -61,16 +69,17 @@ object PlayfairCipher {
                 }
             }
         }
-        return cipherText.toString()
+        return cipherText.toString().uppercase()
     }
 
     fun decrypt(cipherText: String, key: String): String {
         val matrix = prepareKey(key)
+        val cleanCipher = cipherText.uppercase().filter { it in ALPHABET }
         val plainText = StringBuilder()
 
-        for (i in cipherText.indices step 2) {
-            val (row1, col1) = findPosition(matrix, cipherText[i])
-            val (row2, col2) = findPosition(matrix, cipherText[i + 1])
+        for (i in cleanCipher.indices step 2) {
+            val (row1, col1) = findPosition(matrix, cleanCipher[i])
+            val (row2, col2) = findPosition(matrix, cleanCipher[i + 1])
 
             when {
                 row1 == row2 -> {
@@ -87,6 +96,7 @@ object PlayfairCipher {
                 }
             }
         }
-        return plainText.toString()
+
+        return plainText.toString().uppercase()
     }
 }
