@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.mk.cryptosphere.ui.presentation.affine_cipher.AffineCipherScreen
 import com.mk.cryptosphere.ui.presentation.auto_key_vigenere_cipher.AutoKeyVigenereCipherScreen
 import com.mk.cryptosphere.ui.presentation.extended_vigenere_cipher.ExtendedVigereCipherScreen
+import com.mk.cryptosphere.ui.presentation.hill_cipher.HillCipherScreen
 import com.mk.cryptosphere.ui.presentation.home.HomeScreen
 import com.mk.cryptosphere.ui.presentation.playfair_cipher.PlayfairCipherScreen
 import com.mk.cryptosphere.ui.presentation.vigenere_cipher.VigenereCipherScreen
@@ -46,8 +47,21 @@ fun Navigation(
                 },
                 goPLC = {
                     navController.navigate(NavScreen.PLC.route)
+                },
+                goHLC = {
+                    navController.navigate(NavScreen.HLC.route)
                 }
             )
+        }
+
+        composable(
+            NavScreen.HLC.route,
+            enterTransition = { fadeIn(animationSpec = tween(300)) },
+            exitTransition = { fadeOut(animationSpec = tween(300)) }
+        ) {
+            HillCipherScreen {
+                navController.popBackStack()
+            }
         }
 
         composable(

@@ -8,6 +8,7 @@ import androidx.sqlite.db.SupportSQLiteQuery
 import com.mk.core.algorithm.AffineCipher
 import com.mk.core.algorithm.AutoKeyVigenereCipher
 import com.mk.core.algorithm.ExtendedVigenereCipher
+import com.mk.core.algorithm.HillCipher
 import com.mk.core.algorithm.PlayfairCipher
 import com.mk.core.algorithm.VigenereCipher
 import com.mk.core.data.room.dao.EncryptDao
@@ -23,7 +24,7 @@ class CryptoSphereRepositoryImpl(
 ): CryptoSphereRepository {
     override fun encryptFile(inputUri: Uri, key: String): Flow<ResultState<Uri>> {
        return flow {
-              Log.d(TAG, "encryptFile: $inputUri")
+           Log.d(TAG, "encryptFile: $inputUri")
            emit(ResultState.Loading)
            try {
               val isSuccess = ExtendedVigenereCipher.encryptFileAndOverwrite(context, inputUri, key)
@@ -183,6 +184,36 @@ class CryptoSphereRepositoryImpl(
             emit(ResultState.Loading)
             try {
                 val plaintext = PlayfairCipher.decrypt(ciphertext, key)
+                emit(ResultState.Success(plaintext))
+            } catch (e: Exception) {
+                emit(ResultState.Error(e.message ?: "Unknown Error"))
+            }
+        }
+    }
+
+    override fun encryptHillCipher(
+        plaintext: String,
+        key: Array<IntArray>
+    ): Flow<ResultState<String>> {
+        return flow {
+            emit(ResultState.Loading)
+            try {
+                val ciphertext = HillCipher.encrypt(plaintext, key)
+                emit(ResultState.Success(ciphertext))
+            } catch (e: Exception) {
+                emit(ResultState.Error(e.message ?: "Unknown Error"))
+            }
+        }
+    }
+
+    override fun decryptHillCipher(
+        ciphertext: String,
+        key: Array<IntArray>
+    ): Flow<ResultState<String>> {
+        return flow {
+            emit(ResultState.Loading)
+            try {
+                val plaintext = HillCipher.decrypt(ciphertext, key)
                 emit(ResultState.Success(plaintext))
             } catch (e: Exception) {
                 emit(ResultState.Error(e.message ?: "Unknown Error"))

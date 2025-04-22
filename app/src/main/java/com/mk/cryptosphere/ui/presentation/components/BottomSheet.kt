@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -185,6 +186,179 @@ fun BottomSheet(
                                    Toast.makeText(context, "Text and Key must not be empty", Toast.LENGTH_SHORT).show()
                                }
                            }
+                        }
+                    },
+                    icon = R.drawable.baseline_lock_24
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomSheetHill(
+    showBottomSheet: Boolean,
+    sheetState: SheetState,
+    onDismiss: () -> Unit,
+    isEncrypt: Boolean,
+    isDecryptFile: Boolean = false,
+    ciphertextFile: String = "",
+    onClick: (String, List<Int>) -> Unit,
+    textFieldLabel: String = "Enter Text",
+    isHillCipher: Boolean = false,
+) {
+    val coroutineScope = rememberCoroutineScope()
+    var textValue by remember { mutableStateOf("") }
+
+    // Hill Cipher Key List
+    val hillKey = remember { mutableStateOf(listOf("", "", "", "")) }
+
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        if (isDecryptFile) {
+            textValue = ciphertextFile
+        }
+    }
+
+    LaunchedEffect(showBottomSheet) {
+        if (!showBottomSheet) {
+            textValue = ""
+            hillKey.value = listOf("", "", "", "")
+        }
+    }
+
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = onDismiss,
+            sheetState = sheetState,
+            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+            containerColor = MaterialTheme.colorScheme.surface,
+            tonalElevation = 16.dp,
+            dragHandle = {
+                Box(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .width(50.dp)
+                        .height(6.dp)
+                        .clip(RoundedCornerShape(50))
+                        .background(MaterialTheme.colorScheme.primary)
+                )
+            }
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    if (isEncrypt) "Encrypt" else "Decrypt",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Input Teks
+                CustomTextField(
+                    label = textFieldLabel,
+                    enabled = !isDecryptFile,
+                    text = if (isDecryptFile) ciphertextFile else textValue,
+                    isEncrypt = false,
+                    onTextChange = {
+                        textValue = it
+                    },
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Input Matriks Hill Cipher
+                if (isHillCipher) {
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                        CustomTextField(
+                            label = "K[0][0]",
+                            text = hillKey.value[0],
+                            isEncrypt = true,
+                            onTextChange = { hillKey.value = hillKey.value.toMutableList().apply { this[0] = it } },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.weight(1f).padding(end = 4.dp)
+                        )
+                        CustomTextField(
+                            label = "K[0][1]",
+                            text = hillKey.value[1],
+                            isEncrypt = true,
+                            onTextChange = { hillKey.value = hillKey.value.toMutableList().apply { this[1] = it } },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.weight(1f).padding(start = 4.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                        CustomTextField(
+                            label = "K[1][0]",
+                            text = hillKey.value[2],
+                            isEncrypt = true,
+                            onTextChange = { hillKey.value = hillKey.value.toMutableList().apply { this[2] = it } },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.weight(1f).padding(end = 4.dp)
+                        )
+                        CustomTextField(
+                            label = "K[1][1]",
+                            text = hillKey.value[3],
+                            isEncrypt = true,
+                            onTextChange = { hillKey.value = hillKey.value.toMutableList().apply { this[3] = it } },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.weight(1f).padding(start = 4.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                CustomButtonTwo(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = if (isEncrypt) "Encrypt" else "Decrypt",
+                    onClick = {
+                        if (isDecryptFile) {
+                            if (isHillCipher) {
+                                if (ciphertextFile.isNotEmpty() && hillKey.value.all { it.isNotEmpty() }) {
+                                    onClick(ciphertextFile, hillKey.value.map {
+                                        try {
+                                            it.toInt()
+                                        } catch (e: Exception){
+                                            Toast.makeText(context, "Invalid Hill Key", Toast.LENGTH_SHORT).show()
+                                            return@map 0
+                                        }
+                                    })
+                                    coroutineScope.launch { sheetState.hide() }
+                                } else {
+                                    Toast.makeText(context, "Text and Hill Key must not be empty", Toast.LENGTH_SHORT).show()
+                                }
+                            } else {
+                                if (ciphertextFile.isNotEmpty()) {
+                                    onClick(ciphertextFile, emptyList())
+                                    coroutineScope.launch { sheetState.hide() }
+                                } else {
+                                    Toast.makeText(context, "Text must not be empty", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        } else {
+                            if (isHillCipher) {
+                                if (textValue.isNotEmpty() && hillKey.value.all { it.isNotEmpty() }) {
+                                    onClick(textValue, hillKey.value.map { it.toInt() })
+                                    coroutineScope.launch { sheetState.hide() }
+                                } else {
+                                    Toast.makeText(context, "Text and Hill Key must not be empty", Toast.LENGTH_SHORT).show()
+                                }
+                            } else {
+                                if (textValue.isNotEmpty()) {
+                                    onClick(textValue, emptyList())
+                                    coroutineScope.launch { sheetState.hide() }
+                                } else {
+                                    Toast.makeText(context, "Text must not be empty", Toast.LENGTH_SHORT).show()
+                                }
+                            }
                         }
                     },
                     icon = R.drawable.baseline_lock_24

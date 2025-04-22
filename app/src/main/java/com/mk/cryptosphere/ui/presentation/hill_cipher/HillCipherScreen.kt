@@ -1,5 +1,7 @@
-package com.mk.cryptosphere.ui.presentation.auto_key_vigenere_cipher
+package com.mk.cryptosphere.ui.presentation.hill_cipher
 
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -31,7 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mk.core.domain.model.ResultState
 import com.mk.cryptosphere.R
-import com.mk.cryptosphere.ui.presentation.components.BottomSheet
+import com.mk.cryptosphere.ui.presentation.components.BottomSheetHill
 import com.mk.cryptosphere.ui.presentation.components.CustomButtonTwo
 import com.mk.cryptosphere.ui.presentation.components.ErrorDialog
 import com.mk.cryptosphere.ui.presentation.components.ShowDialog
@@ -40,15 +42,17 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AutoKeyVigenereCipherScreen(
-    viewModel: AutoKeyVigenereCipherViewModel = hiltViewModel(),
-    onBackClick: () -> Unit,
+fun HillCipherScreen(
+    viewModel: HillCipherViewModel = hiltViewModel(),
+    onBackClick: () -> Unit
 ) {
+
 
     var showDialogResult by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
+
 
     val sheetState2 = rememberModalBottomSheetState()
     var showBottomSheet2 by remember { mutableStateOf(false) }
@@ -73,35 +77,35 @@ fun AutoKeyVigenereCipherScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
-    topBar = {
-        TopAppBar(
-            navigationIcon =  {
-                IconButton(
-                    onClick = {
-                        onBackClick()
+        topBar = {
+            TopAppBar(
+                navigationIcon =  {
+                    IconButton(
+                        onClick = {
+                            onBackClick()
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                            contentDescription = null
+                        )
                     }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_arrow_back_24),
-                        contentDescription = null
+                },
+                title = {
+                    Text(
+                        text = "Hill Cipher",
+                        modifier = Modifier.padding(8.dp),
                     )
                 }
-            },
-            title = {
-                Text(
-                    text = "Auto Key Vigenere Cipher",
-                    modifier = Modifier.padding(8.dp),
-                )
-            }
-        )
-    }
+            )
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-        ) {
-            when (state) {
+        ){
+            when(state){
                 is ResultState.Error -> {
                     val errorMessage = (state as ResultState.Error).message
                     ErrorDialog(
@@ -110,16 +114,13 @@ fun AutoKeyVigenereCipherScreen(
                         viewModel.resetState()
                     }
                 }
-
                 ResultState.Idle -> {
 
                 }
-
                 ResultState.Loading -> {
 
                 }
-
-                is ResultState.Success -> {
+                is ResultState.Success ->{
                     val data = (state as ResultState.Success).data
                     ShowDialog(
                         showDialog = showDialogResult,
@@ -133,13 +134,13 @@ fun AutoKeyVigenereCipherScreen(
                         isDecrypt = data.isDecrypt,
                     )
                 }
-
                 ResultState.NothingData -> {}
             }
             Column(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment =Alignment.CenterHorizontally
             ) {
                 CustomButtonTwo(
                     modifier = Modifier.fillMaxWidth(),
@@ -150,7 +151,7 @@ fun AutoKeyVigenereCipherScreen(
                             sheetState.show()
                         }
                     },
-                    icon = R.drawable.baseline_lock_24
+                    icon =  R.drawable.baseline_lock_24
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 CustomButtonTwo(
@@ -175,64 +176,94 @@ fun AutoKeyVigenereCipherScreen(
                 )
             }
 
-            BottomSheet(
+            BottomSheetHill(
                 showBottomSheet = showBottomSheet,
                 sheetState = sheetState,
-                onDismiss = {
-                    coroutineScope.launch { sheetState.hide() }
-                    showBottomSheet = false
-                },
+                onDismiss = { showBottomSheet = false },
                 isEncrypt = true,
-                onClick = { plainText, key, _ ->
-                    viewModel.encrypt(
-                        plaintext = plainText,
-                        key = key
-                    )
+                isHillCipher = true,
+                onClick = { plaintext, matrixKey: List<Int> ->
+                    try {
+                        val arraylist = ArrayList<Array<Int>>()
+                        val size = 2
+
+                        for (i in 0 until size) {
+                            val row = matrixKey.slice(i * size until (i + 1) * size).toIntArray()
+                            arraylist.add(row.toTypedArray())
+                        }
+
+                        viewModel.encrypt(plaintext, arraylist)
+
+                    } catch (e: Exception){
+                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                        Log.e("Screen", "HillCipherScreen: ${e.message}")
+                    }
                     coroutineScope.launch { sheetState.hide() }
                     showBottomSheet = false
                     showDialogResult = true
-                },
-                textFieldLabel = "Enter Plaintext",
-                textFieldLabelKey = "Enter Key"
+                }
             )
 
-            BottomSheet(
+            BottomSheetHill(
                 showBottomSheet = showBottomSheet2,
                 sheetState = sheetState2,
-                onDismiss = {
-                    coroutineScope.launch { sheetState2.hide() }
-                    showBottomSheet2 = false
-                },
+                onDismiss = { showBottomSheet2 = false },
                 isEncrypt = false,
-                onClick = { plainText, key, _ ->
-                    viewModel.decrypt(plainText, key)
+                isHillCipher = true,
+                onClick = { plaintext, matrixKey: List<Int> ->
+                    try {
+                        val arraylist = ArrayList<Array<Int>>()
+                        val size = 2
+
+                        for (i in 0 until size) {
+                            val row = matrixKey.slice(i * size until (i + 1) * size).toIntArray()
+                            arraylist.add(row.toTypedArray())
+                        }
+
+                        viewModel.decrypt(plaintext, arraylist)
+
+                    } catch (e: Exception){
+                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                        Log.e("Screen", "HillCipherScreen: ${e.message}")
+                    }
                     coroutineScope.launch { sheetState2.hide() }
                     showBottomSheet2 = false
                     showDialogResult = true
-                },
-                textFieldLabel = "Enter Ciphertext",
-                textFieldLabelKey = "Enter Key"
+                }
             )
 
-            BottomSheet(
+            BottomSheetHill(
                 showBottomSheet = showBottomSheet3,
                 sheetState = sheetState3,
-                isDecryptFile = true,
+                onDismiss = { showBottomSheet3 = false },
+                isHillCipher = true,
                 ciphertextFile = textValue,
-                onDismiss = {
-                    coroutineScope.launch { sheetState3.hide() }
-                    showBottomSheet3 = false
-                },
+                isDecryptFile = true,
                 isEncrypt = false,
-                onClick = { plainText, key, _ ->
-                    viewModel.decrypt(plainText, key)
+                onClick = { plaintext, matrixKey: List<Int> ->
+
+                    try {
+                        val arraylist = ArrayList<Array<Int>>()
+                        val size = 2
+
+                        for (i in 0 until size) {
+                            val row = matrixKey.slice(i * size until (i + 1) * size).toIntArray()
+                            arraylist.add(row.toTypedArray())
+                        }
+
+                        viewModel.decrypt(plaintext, arraylist)
+
+                    } catch (e: Exception){
+                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                        Log.e("Screen", "HillCipherScreen: ${e.message}")
+                    }
+
                     coroutineScope.launch { sheetState3.hide() }
                     showBottomSheet3 = false
                     showDialogResult = true
-                },
-                textFieldLabel = "Enter Ciphertext",
-                textFieldLabelKey = "Enter Key"
+                }
             )
         }
     }
+
 }

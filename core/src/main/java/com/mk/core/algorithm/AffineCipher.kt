@@ -3,7 +3,6 @@ package com.mk.core.algorithm
 object AffineCipher {
     private const val ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-    // Encrypt function: C = (aP + b) mod 26
     fun encrypt(plaintext: String, a: Int, b: Int): String {
         require(gcd(a, 26) == 1) { "Key 'a' must be coprime with 26" }
 

@@ -47,6 +47,7 @@ import com.mk.core.utils.CipherAlgorithm
 import com.mk.cryptosphere.R
 import com.mk.cryptosphere.ui.presentation.components.BottomSheet
 import com.mk.cryptosphere.ui.presentation.components.CustomButtonTwo
+import com.mk.cryptosphere.ui.presentation.components.ErrorDialog
 import com.mk.cryptosphere.ui.presentation.components.HistoryItem
 import com.mk.cryptosphere.ui.presentation.components.ShowDialog
 import com.mk.cryptosphere.utils.readFileContent
@@ -136,7 +137,12 @@ fun VigenereCipherScreen(
         ){
             when(state){
                 is ResultState.Error -> {
-
+                    val errorMessage = (state as ResultState.Error).message
+                    ErrorDialog(
+                        errorMessage = errorMessage
+                    ) {
+                        viewModel.resetState()
+                    }
                 }
                 ResultState.Idle -> {
 
@@ -155,6 +161,7 @@ fun VigenereCipherScreen(
                         plaintext = data.plaintext,
                         key = data.key,
                         ciphertext = data.ciphertext,
+                        saveFitur = true,
                         isDecrypt = data.isDecrypt,
                         onSaveToHistory = {
                             if (it){

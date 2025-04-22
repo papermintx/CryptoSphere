@@ -43,6 +43,7 @@ fun ShowDialog(
     modifier: Modifier = Modifier,
     showDialog: Boolean,
     onDismissRequest: () -> Unit,
+    saveFitur: Boolean = false,
     onSaveToHistory: (Boolean) -> Unit = {},
     plaintext: String,
     key: String,
@@ -130,15 +131,17 @@ fun ShowDialog(
                             }
                         }
 
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Start
-                        ) {
-                            Checkbox(
-                                checked = saveToHistory,
-                                onCheckedChange = { saveToHistory = it }
-                            )
-                            Text("Simpan ke history")
+                        if (saveFitur) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Start
+                            ) {
+                                Checkbox(
+                                    checked = saveToHistory,
+                                    onCheckedChange = { saveToHistory = it }
+                                )
+                                Text("save to history")
+                            }
                         }
                     } else {
                         Text("Ciphertext: $ciphertext")

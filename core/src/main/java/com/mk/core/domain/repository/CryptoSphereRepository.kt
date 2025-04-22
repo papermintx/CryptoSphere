@@ -27,6 +27,10 @@ interface CryptoSphereRepository {
     fun encryptPlayfairCipher(plaintext: String, key: String): Flow<ResultState<String>>
     fun decryptPlayfairCipher(ciphertext: String, key: String): Flow<ResultState<String>>
 
+    // ==== Cipher: Hill ====
+    fun encryptHillCipher(plaintext: String, key: Array<IntArray>): Flow<ResultState<String>>
+    fun decryptHillCipher(ciphertext: String, key: Array<IntArray>): Flow<ResultState<String>>
+
     // ==== RIWAYAT / HISTORY ====
 
     // Simpan riwayat enkripsi/dekripsi

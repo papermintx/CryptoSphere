@@ -32,6 +32,7 @@ fun HomeScreen(
     goVC: () -> Unit,
     goAFC: () -> Unit,
     goPLC: () -> Unit,
+    goHLC: () -> Unit,
 ) {
     val algorithm = CipherAlgorithm.entries
 
@@ -96,6 +97,12 @@ fun HomeScreen(
                                 if (it.toString() == CipherAlgorithm.PLAYFAIR_CIPHER.toString() ){
                                     goPLC()
                                 }
+                                if (
+                                    it.toString() == CipherAlgorithm.HILL_CIPHER.toString()
+                                ) {
+                                    goHLC()
+                                }
+
                             }
                         )
                     }

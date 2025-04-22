@@ -11,12 +11,14 @@ import com.mk.core.domain.repository.CryptoSphereRepository
 import com.mk.core.domain.usecase.DecryptAffineCipherUseCase
 import com.mk.core.domain.usecase.DecryptAutoKeyVigenereCipherUseCase
 import com.mk.core.domain.usecase.DecryptExtendedVigereCipherUseCase
+import com.mk.core.domain.usecase.DecryptHillCipherUseCase
 import com.mk.core.domain.usecase.DecryptPlayfairCipherUseCase
 import com.mk.core.domain.usecase.DecryptVigenereCipherUseCase
 import com.mk.core.domain.usecase.DeleteHistoryUseCase
 import com.mk.core.domain.usecase.EncryptAffineCipherUseCase
 import com.mk.core.domain.usecase.EncryptAutoKeyVigenereCipherUseCase
 import com.mk.core.domain.usecase.EncryptExtendedVigereCipherUseCase
+import com.mk.core.domain.usecase.EncryptHillCipherUseCase
 import com.mk.core.domain.usecase.EncryptPlayfairCipherUseCase
 import com.mk.core.domain.usecase.EncryptVigenereCipherUseCase
 import com.mk.core.domain.usecase.GetHistoryUseCase
@@ -108,4 +110,12 @@ object ModuleApp {
     @Provides
     fun provideDeleteEncryptUseCase(cryptoSphereRepository: CryptoSphereRepository) =
         DeleteHistoryUseCase(cryptoSphereRepository)
+
+    @Provides
+    fun provideEncryptHillCipherUseCase(cryptoSphereRepository: CryptoSphereRepository) =
+        EncryptHillCipherUseCase(cryptoSphereRepository)
+
+    @Provides
+    fun provideDecryptHillCipherUseCase(cryptoSphereRepository: CryptoSphereRepository) =
+        DecryptHillCipherUseCase(cryptoSphereRepository)
 }

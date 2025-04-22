@@ -8,5 +8,6 @@ sealed class NavScreen(val route: String) {
     data object AKVC: NavScreen("akvc")
     data object PLC: NavScreen("plc")
     data object VC: NavScreen("vc")
+    data object HLC: NavScreen("hlc")
     data object Settings: NavScreen("settings")
 }
