@@ -1,6 +1,5 @@
 package com.mk.cryptosphere.ui.presentation.components
 
-import android.content.Context
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -31,9 +30,11 @@ import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.mk.cryptosphere.R
+import com.mk.cryptosphere.utils.saveCiphertextToFile
 import kotlinx.coroutines.launch
 
 
@@ -66,7 +67,7 @@ fun ShowDialog(
                     val success = saveCiphertextToFile(context, it, ciphertext)
                     Toast.makeText(
                         context,
-                        if (success) "Ciphertext successfully saved" else "Failed to save ciphertext",
+                        if (success) context.getText(R.string.ciphertext_successfully_saved) else context.getText(R.string.failed_to_save_ciphertext),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -77,14 +78,14 @@ fun ShowDialog(
             modifier = modifier,
             onDismissRequest = onDismissRequest,
             title = {
-                Text("${if (isDecrypt) "Decryption" else "Encryption"} Result")
+                Text(text = if (isDecrypt) stringResource(id = R.string.decryption_result) else stringResource(id = R.string.encryption_result))
             },
             text = {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     if (isDecrypt) {
                         Box(modifier = Modifier.fillMaxWidth()) {
                             Text(
-                                text = "Plaintext: $plaintext",
+                                text = stringResource(id = R.string.plaintext, plaintext),
                                 modifier = Modifier
                                     .align(Alignment.CenterStart)
                                     .padding(end = 40.dp)
@@ -92,7 +93,7 @@ fun ShowDialog(
                             IconButton(
                                 onClick = {
                                     clipboardManager.setText(AnnotatedString(plaintext))
-                                    Toast.makeText(context, "Copy Plaintext Success", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getText(R.string.copy_plaintext_success), Toast.LENGTH_SHORT).show()
                                 },
                                 modifier = Modifier.align(Alignment.CenterEnd)
                             ) {
@@ -103,16 +104,16 @@ fun ShowDialog(
                             }
                         }
                     } else {
-                        Text("Plaintext: $plaintext")
+                        Text(text = stringResource(id = R.string.plaintext, plaintext))
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Key: $key")
+                    Text(text = stringResource(id = R.string.key, key))
 
                     if (!isDecrypt) {
                         Box(modifier = Modifier.fillMaxWidth()) {
                             Text(
-                                text = "Ciphertext: $ciphertext",
+                                text = stringResource(id = R.string.ciphertext, ciphertext),
                                 modifier = Modifier
                                     .align(Alignment.CenterStart)
                                     .padding(end = 40.dp)
@@ -120,7 +121,7 @@ fun ShowDialog(
                             IconButton(
                                 onClick = {
                                     clipboardManager.setText(AnnotatedString(ciphertext))
-                                    Toast.makeText(context, "Copy Ciphertext Success", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getText(R.string.copy_ciphertext_success), Toast.LENGTH_SHORT).show()
                                 },
                                 modifier = Modifier.align(Alignment.CenterEnd)
                             ) {
@@ -140,11 +141,11 @@ fun ShowDialog(
                                     checked = saveToHistory,
                                     onCheckedChange = { saveToHistory = it }
                                 )
-                                Text("save to history")
+                                Text(text = stringResource(id = R.string.save_to_history))
                             }
                         }
                     } else {
-                        Text("Ciphertext: $ciphertext")
+                        Text(text = stringResource(id = R.string.ciphertext, ciphertext))
                     }
                 }
             },
@@ -155,7 +156,7 @@ fun ShowDialog(
                     }
                     onDismissRequest()
                 }) {
-                    Text("OK")
+                    Text(text = stringResource(id = R.string.ok))
                 }
             },
             confirmButton = {
@@ -163,23 +164,10 @@ fun ShowDialog(
                     Button(onClick = {
                         outputFilePickerLauncher.launch("ciphertext_${System.currentTimeMillis()}.txt")
                     }) {
-                        Text("Save")
+                        Text(text = stringResource(id = R.string.save))
                     }
                 }
             }
         )
-    }
-}
-
-
-fun saveCiphertextToFile(context: Context, outputUri: Uri, ciphertext: String): Boolean {
-    return try {
-        context.contentResolver.openOutputStream(outputUri)?.use { outputStream ->
-            outputStream.write(ciphertext.toByteArray())
-        }
-        true
-    } catch (e: Exception) {
-        e.printStackTrace()
-        false
     }
 }

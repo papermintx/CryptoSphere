@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -73,28 +74,28 @@ fun AutoKeyVigenereCipherScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
-    topBar = {
-        TopAppBar(
-            navigationIcon =  {
-                IconButton(
-                    onClick = {
-                        onBackClick()
+        topBar = {
+            TopAppBar(
+                navigationIcon =  {
+                    IconButton(
+                        onClick = {
+                            onBackClick()
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                            contentDescription = null
+                        )
                     }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_arrow_back_24),
-                        contentDescription = null
+                },
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.auto_key_vigenere_cipher),
+                        modifier = Modifier.padding(8.dp),
                     )
                 }
-            },
-            title = {
-                Text(
-                    text = "Auto Key Vigenere Cipher",
-                    modifier = Modifier.padding(8.dp),
-                )
-            }
-        )
-    }
+            )
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -111,13 +112,9 @@ fun AutoKeyVigenereCipherScreen(
                     }
                 }
 
-                ResultState.Idle -> {
+                ResultState.Idle -> {}
 
-                }
-
-                ResultState.Loading -> {
-
-                }
+                ResultState.Loading -> {}
 
                 is ResultState.Success -> {
                     val data = (state as ResultState.Success).data
@@ -143,7 +140,7 @@ fun AutoKeyVigenereCipherScreen(
             ) {
                 CustomButtonTwo(
                     modifier = Modifier.fillMaxWidth(),
-                    title = "Encrypt Text",
+                    title = stringResource(id = R.string.encrypt_text),
                     onClick = {
                         showBottomSheet = true
                         coroutineScope.launch {
@@ -155,7 +152,7 @@ fun AutoKeyVigenereCipherScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 CustomButtonTwo(
                     modifier = Modifier.fillMaxWidth(),
-                    title = "Decrypt Text",
+                    title = stringResource(id = R.string.decrypt_text),
                     onClick = {
                         showBottomSheet2 = true
                         coroutineScope.launch {
@@ -167,7 +164,7 @@ fun AutoKeyVigenereCipherScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 CustomButtonTwo(
                     modifier = Modifier.fillMaxWidth(),
-                    title = "Decrypt File",
+                    title = stringResource(id = R.string.decrypt_file),
                     onClick = {
                         filePickerLauncher.launch(arrayOf("text/plain"))
                     },
@@ -192,8 +189,8 @@ fun AutoKeyVigenereCipherScreen(
                     showBottomSheet = false
                     showDialogResult = true
                 },
-                textFieldLabel = "Enter Plaintext",
-                textFieldLabelKey = "Enter Key"
+                textFieldLabel = stringResource(id = R.string.enter_plaintext),
+                textFieldLabelKey = stringResource(id = R.string.enter_key)
             )
 
             BottomSheet(
@@ -210,8 +207,8 @@ fun AutoKeyVigenereCipherScreen(
                     showBottomSheet2 = false
                     showDialogResult = true
                 },
-                textFieldLabel = "Enter Ciphertext",
-                textFieldLabelKey = "Enter Key"
+                textFieldLabel = stringResource(id = R.string.enter_ciphertext),
+                textFieldLabelKey = stringResource(id = R.string.enter_key)
             )
 
             BottomSheet(
@@ -230,8 +227,8 @@ fun AutoKeyVigenereCipherScreen(
                     showBottomSheet3 = false
                     showDialogResult = true
                 },
-                textFieldLabel = "Enter Ciphertext",
-                textFieldLabelKey = "Enter Key"
+                textFieldLabel = stringResource(id = R.string.enter_ciphertext),
+                textFieldLabelKey = stringResource(id = R.string.enter_key)
             )
         }
     }

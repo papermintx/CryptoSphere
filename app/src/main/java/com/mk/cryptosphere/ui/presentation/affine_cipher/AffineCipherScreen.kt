@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -47,7 +48,6 @@ fun AffineCipherScreen(
 ) {
 
     var showDialogResult by remember { mutableStateOf(false) }
-    var showErrorDialog by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -79,9 +79,7 @@ fun AffineCipherScreen(
             TopAppBar(
                 navigationIcon =  {
                     IconButton(
-                        onClick = {
-                            onBackClick()
-                        }
+                        onClick = { onBackClick() }
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_arrow_back_24),
@@ -91,7 +89,7 @@ fun AffineCipherScreen(
                 },
                 title = {
                     Text(
-                        text = "Affine Cipher",
+                        text = stringResource(id = R.string.affine_cipher),
                         modifier = Modifier.padding(8.dp),
                     )
                 }
@@ -113,13 +111,9 @@ fun AffineCipherScreen(
                     }
                 }
 
-                ResultState.Idle -> {
+                ResultState.Idle -> {}
 
-                }
-
-                ResultState.Loading -> {
-
-                }
+                ResultState.Loading -> {}
 
                 is ResultState.Success -> {
                     val data = (state as ResultState.Success).data
@@ -145,34 +139,28 @@ fun AffineCipherScreen(
             ) {
                 CustomButtonTwo(
                     modifier = Modifier.fillMaxWidth(),
-                    title = "Encrypt Text",
+                    title = stringResource(id = R.string.encrypt_text),
                     onClick = {
                         showBottomSheet = true
-                        coroutineScope.launch {
-                            sheetState.show()
-                        }
+                        coroutineScope.launch { sheetState.show() }
                     },
                     icon = R.drawable.baseline_lock_24
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 CustomButtonTwo(
                     modifier = Modifier.fillMaxWidth(),
-                    title = "Decrypt Text",
+                    title = stringResource(id = R.string.decrypt_text),
                     onClick = {
                         showBottomSheet2 = true
-                        coroutineScope.launch {
-                            sheetState2.show()
-                        }
+                        coroutineScope.launch { sheetState2.show() }
                     },
                     icon = R.drawable.baseline_lock_open_24
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 CustomButtonTwo(
                     modifier = Modifier.fillMaxWidth(),
-                    title = "Decrypt File",
-                    onClick = {
-                        filePickerLauncher.launch(arrayOf("text/plain"))
-                    },
+                    title = stringResource(id = R.string.decrypt_file),
+                    onClick = { filePickerLauncher.launch(arrayOf("text/plain")) },
                     icon = R.drawable.baseline_attach_file_24
                 )
             }
@@ -190,17 +178,16 @@ fun AffineCipherScreen(
                     try {
                         val keyAInt = keyA.toInt()
                         val keyBInt = keyB?.toInt() ?: 0
-                        viewModel.encrypt( plainText, keyAInt, keyBInt)
+                        viewModel.encrypt(plainText, keyAInt, keyBInt)
                         coroutineScope.launch { sheetState.hide() }
                         showBottomSheet = false
                         showDialogResult = true
                     } catch (_: NumberFormatException) {
-                        Toast.makeText(context, "Key A and Key B must be integers", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getText(R.string.key_must_be_integers), Toast.LENGTH_SHORT).show()
                     }
-
                 },
-                textFieldLabel = "Enter Plaintext",
-                textFieldLabelKey = "Enter Key"
+                textFieldLabel = stringResource(id = R.string.enter_plaintext),
+                textFieldLabelKey = stringResource(id = R.string.enter_key)
             )
 
             BottomSheet(
@@ -216,16 +203,16 @@ fun AffineCipherScreen(
                     try {
                         val keyAInt = keyA.toInt()
                         val keyBInt = keyB?.toInt() ?: 0
-                        viewModel.decrypt( ciphertext, keyAInt, keyBInt)
-                        coroutineScope.launch { sheetState.hide() }
+                        viewModel.decrypt(ciphertext, keyAInt, keyBInt)
+                        coroutineScope.launch { sheetState2.hide() }
                         showBottomSheet2 = false
                         showDialogResult = true
                     } catch (_: NumberFormatException) {
-                        Toast.makeText(context, "Key A and Key B must be integers", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getText(R.string.key_must_be_integers), Toast.LENGTH_SHORT).show()
                     }
                 },
-                textFieldLabel = "Enter Ciphertext",
-                textFieldLabelKey = "Enter Key"
+                textFieldLabel = stringResource(id = R.string.enter_ciphertext),
+                textFieldLabelKey = stringResource(id = R.string.enter_key)
             )
 
             BottomSheet(
@@ -243,16 +230,16 @@ fun AffineCipherScreen(
                     try {
                         val keyAInt = keyA.toInt()
                         val keyBInt = keyB?.toInt() ?: 0
-                        viewModel.decrypt( plainText, keyAInt, keyBInt)
+                        viewModel.decrypt(plainText, keyAInt, keyBInt)
                         coroutineScope.launch { sheetState3.hide() }
                         showBottomSheet3 = false
                         showDialogResult = true
                     } catch (_: NumberFormatException) {
-                        Toast.makeText(context, "Key A and Key B must be integers", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getText(R.string.key_must_be_integers), Toast.LENGTH_SHORT).show()
                     }
                 },
-                textFieldLabel = "Enter Ciphertext",
-                textFieldLabelKey = "Enter Key"
+                textFieldLabel = stringResource(id = R.string.enter_ciphertext),
+                textFieldLabelKey = stringResource(id = R.string.enter_key)
             )
         }
     }

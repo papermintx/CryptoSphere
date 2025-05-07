@@ -3,4 +3,57 @@
     <string name="error">Error</string>
     <string name="ok">OK</string>
 
+    <string name="affine_cipher">Affine Cipher</string>
+    <string name="encrypt_text">Encrypt Text</string>
+    <string name="decrypt_text">Decrypt Text</string>
+    <string name="decrypt_file">Decrypt File</string>
+    <string name="enter_plaintext">Enter Plaintext</string>
+    <string name="enter_ciphertext">Enter Ciphertext</string>
+    <string name="enter_key">Enter Key</string>
+    <string name="key_must_be_integers">Key A and Key B must be integers</string>
+    <string name="auto_key_vigenere_cipher">Auto Key Vigenere Cipher</string>
+    <string name="confirm">Confirm</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="encrypt">Encrypt</string>
+    <string name="decrypt">Decrypt</string>
+    <string name="enter_text">Enter Text</string>
+    <string name="enter_key_a">Enter Key A</string>
+    <string name="enter_key_b">Enter Key B</string>
+    <string name="text_and_keys_must_not_be_empty">Text and Key A and Key B must not be empty</string>
+    <string name="text_must_not_be_empty">Text must not be empty</string>
+    <string name="text_and_hill_key_must_not_be_empty">Text and Hill Key must not be empty</string>
+    <string name="file_attachment">File Attachment</string>
+    <string name="attach_file">Attach File</string>
+    <string name="file_attached">File Attached</string>
+    <string name="key_invalid">Key Invalid</string>
+    <string name="key_label">Key: %1$s</string>
+    <string name="ciphertext_label">Ciphertext: %1$s</string>
+    <string name="file_label">File: %1$s</string>
+    <string name="copy_ciphertext_success">Copy Ciphertext Success</string>
+    <string name="delete_button_description">Delete</string>
+    <string name="expand_less_icon_description">Collapse</string>
+    <string name="expand_more_icon_description">Expand</string>
+    <string name="decryption_result">Decryption Result</string>
+    <string name="encryption_result">Encryption Result</string>
+    <string name="plaintext">Plaintext: %1$s</string>
+    <string name="key">Key: %1$s</string>
+    <string name="ciphertext">Ciphertext: %1$s</string>
+    <string name="copy_plaintext_success">Copy Plaintext Success</string>
+    <string name="save_to_history">Save to history</string>
+    <string name="save">Save</string>
+    <string name="ciphertext_successfully_saved">Ciphertext successfully saved</string>
+    <string name="failed_to_save_ciphertext">Failed to save ciphertext</string>
+    <string name="extended_vigenere_cipher">Extended Vigenere Cipher</string>
+    <string name="encrypt_file_message">Are you sure you want to encrypt this file?</string>
+    <string name="decrypt_file_message">Are you sure you want to decrypt this file?</string>
+    <string name="please_select_file_and_key">Please select a file and key</string>
+    <string name="hill_cipher">Hill Cipher</string>
+    <string name="something_went_wrong">Something went wrong!</string>
+    <string name="playfair_cipher">Playfair Cipher</string>
+    <string name="no_history">No History</string>
+    <string name="failed_to_load_history">Failed to load history</string>
+
+    <string name="vigenere_cipher">Vigenere Cipher</string>
+    <string name="no_data">No Data</string>
+
 </resources>

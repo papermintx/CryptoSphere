@@ -1,5 +1,6 @@
 package com.mk.cryptosphere.ui.presentation.home
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,7 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mk.core.utils.CipherAlgorithm
 import com.mk.cryptosphere.R
@@ -35,19 +38,28 @@ fun HomeScreen(
     goHLC: () -> Unit,
 ) {
     val algorithm = CipherAlgorithm.entries
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = "CryptoSphere",
+                        text = stringResource( R.string.app_name),
                         modifier = Modifier.padding(8.dp),
                     )
                 },
                 actions = {
                     IconButton(
-                        onClick = {}
+                        onClick = {
+                            Toast
+                                .makeText(
+                                    context,
+                                    "This feature is under development",
+                                    Toast.LENGTH_SHORT
+                                )
+                                .show()
+                        }
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.baseline_info_24),
@@ -77,28 +89,28 @@ fun HomeScreen(
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    algorithm.map {
+                    algorithm.map { data ->
                         ButtonCustom(
                             modifier = Modifier.fillMaxWidth(),
-                            title = it.toString(),
+                            title = data.toString(),
                             onClick = {
-                                if (it.toString() == CipherAlgorithm.EXTENDED_VIGENERE.toString() ){
+                                if (it == CipherAlgorithm.EXTENDED_VIGENERE.toString() ){
                                     goEVC()
                                 }
-                                if (it.toString() == CipherAlgorithm.VIGENERE_CIPHER.toString() ){
+                                if (it == CipherAlgorithm.VIGENERE_CIPHER.toString() ){
                                     goVC()
                                 }
-                                if (it.toString() == CipherAlgorithm.AUTO_KEY_VIGENERE.toString() ){
+                                if (it == CipherAlgorithm.AUTO_KEY_VIGENERE.toString() ){
                                     goAKVC()
                                 }
-                                if (it.toString() == CipherAlgorithm.AFFINE_CIPHER.toString() ){
+                                if (it == CipherAlgorithm.AFFINE_CIPHER.toString() ){
                                     goAFC()
                                 }
-                                if (it.toString() == CipherAlgorithm.PLAYFAIR_CIPHER.toString() ){
+                                if (it == CipherAlgorithm.PLAYFAIR_CIPHER.toString() ){
                                     goPLC()
                                 }
                                 if (
-                                    it.toString() == CipherAlgorithm.HILL_CIPHER.toString()
+                                    it == CipherAlgorithm.HILL_CIPHER.toString()
                                 ) {
                                     goHLC()
                                 }

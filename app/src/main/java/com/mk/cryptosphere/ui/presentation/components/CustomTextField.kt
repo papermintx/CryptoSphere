@@ -36,9 +36,9 @@ fun CustomTextField(
             enabled = enabled,
             leadingIcon = {
                if (isEncrypt){
-                     Icon(painterResource(R.drawable.baseline_lock_24), contentDescription = "Lock")
+                     Icon(painterResource(R.drawable.baseline_lock_24), contentDescription = null)
                } else {
-                    Icon(painterResource(R.drawable.baseline_lock_open_24), contentDescription = "Lock Open")
+                    Icon(painterResource(R.drawable.baseline_lock_open_24), contentDescription = null)
                }
             },
             label = { Text(label) },

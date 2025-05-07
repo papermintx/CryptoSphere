@@ -5,6 +5,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.mk.cryptosphere.R
 
 @Composable
 fun ConfirmDialog(
@@ -24,17 +26,16 @@ fun ConfirmDialog(
             Button(
                 onClick = { onConfirm() },
             ) {
-                Text(text = "Confirm")
+                Text(text = stringResource(id = R.string.confirm))
             }
         },
         dismissButton = {
             Button(
                 onClick = { onDismiss() },
             ) {
-                Text(text = "Dismiss")
+                Text(text = stringResource(id = R.string.dismiss))
             }
         },
         modifier = modifier
     )
-
 }

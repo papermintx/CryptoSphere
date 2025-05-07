@@ -29,12 +29,14 @@ import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mk.core.data.room.model.EncryptEntity
 import com.mk.cryptosphere.R
 import com.mk.cryptosphere.utils.formatDate
+
 @Composable
 fun HistoryItem(
     entity: EncryptEntity,
@@ -99,7 +101,7 @@ fun HistoryItem(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_delete_24),
-                        contentDescription = "Delete",
+                        contentDescription = stringResource(id = R.string.delete_button_description),
                         tint = Color.Gray
                     )
                 }
@@ -109,7 +111,7 @@ fun HistoryItem(
                 ) {
                     Icon(
                         painter = painterResource(id = if (expanded) R.drawable.baseline_expand_less_24 else R.drawable.baseline_expand_more_24),
-                        contentDescription = null,
+                        contentDescription = if (expanded) stringResource(id = R.string.expand_less_icon_description) else stringResource(id = R.string.expand_more_icon_description)
                     )
                 }
             }
@@ -117,7 +119,7 @@ fun HistoryItem(
             AnimatedVisibility(visible = expanded) {
                 Column(modifier = Modifier.padding(top = 8.dp)) {
                     entity.key?.let {
-                        Text(text = "Key: $it", style = MaterialTheme.typography.bodyMedium)
+                        Text(text = stringResource(id = R.string.key_label, it), style = MaterialTheme.typography.bodyMedium)
                     }
                     entity.ciphertext?.let {
                         Row(
@@ -127,7 +129,7 @@ fun HistoryItem(
                                 .fillMaxWidth()
                         ) {
                             Text(
-                                text = "Ciphertext: $it",
+                                text = stringResource(id = R.string.ciphertext_label, it),
                                 style = MaterialTheme.typography.bodyMedium,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
@@ -136,7 +138,7 @@ fun HistoryItem(
                             IconButton(
                                 onClick = {
                                     clipboardManager.setText(AnnotatedString(entity.ciphertext ?: ""))
-                                    Toast.makeText(context, "Copy Ciphertext Success", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getText(R.string.copy_ciphertext_success), Toast.LENGTH_SHORT).show()
                                 }
                             ) {
                                 Icon(
@@ -147,7 +149,7 @@ fun HistoryItem(
                         }
                     }
                     entity.filePath?.let {
-                        Text(text = "File: $it", style = MaterialTheme.typography.bodyMedium)
+                        Text(text = stringResource(id = R.string.file_label, it), style = MaterialTheme.typography.bodyMedium)
                     }
                 }
             }

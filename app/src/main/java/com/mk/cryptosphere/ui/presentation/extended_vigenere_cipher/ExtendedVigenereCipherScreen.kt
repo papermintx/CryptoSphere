@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -54,7 +55,6 @@ fun ExtendedVigereCipherScreen(
     var showDialog by remember { mutableStateOf(false) }
     var showDialog2 by remember { mutableStateOf(false) }
 
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -72,7 +72,7 @@ fun ExtendedVigereCipherScreen(
                 },
                 title = {
                     Text(
-                        text = "Extended Vigenere Cipher",
+                        text = stringResource(id = R.string.extended_vigenere_cipher),
                         modifier = Modifier.padding(8.dp),
                     )
                 }
@@ -87,13 +87,13 @@ fun ExtendedVigereCipherScreen(
                     onDismissRequest = {
                         showDialog = false
                     },
-                    title = "Confirm",
-                    message = "Are you sure you want to encrypt this file?",
+                    title = stringResource(id = R.string.confirm),
+                    message = stringResource(id = R.string.encrypt_file_message),
                     onConfirm = {
                         uriAndKey?.let {
                             viewmodel.encrypt( it.keys.first(), it.values.first())
                         } ?: run {
-                            Toast .makeText(context, "Please select a file and key", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getText(R.string.please_select_file_and_key), Toast.LENGTH_SHORT).show()
                         }
                         showDialog = false
                     }
@@ -107,14 +107,14 @@ fun ExtendedVigereCipherScreen(
                     onDismissRequest = {
                         showDialog2 = false
                     },
-                    title = "Confirm",
-                    message = "Are you sure you want to decrypt this file?",
+                    title = stringResource(id = R.string.confirm),
+                    message = stringResource(id = R.string.decrypt_file_message),
                     onConfirm = {
-                       uriAndKey?.let {
-                           viewmodel.decrypt( it.keys.first(), it.values.first())
-                       } ?: run {
-                           Toast .makeText(context, "Please select a file and key", Toast.LENGTH_SHORT).show()
-                       }
+                        uriAndKey?.let {
+                            viewmodel.decrypt( it.keys.first(), it.values.first())
+                        } ?: run {
+                            Toast.makeText(context, context.getText(R.string.please_select_file_and_key), Toast.LENGTH_SHORT).show()
+                        }
                         showDialog2 = false
                     }
                 ) {
@@ -127,7 +127,7 @@ fun ExtendedVigereCipherScreen(
             ) {
                 CustomButtonTwo(
                     modifier = Modifier.fillMaxWidth(),
-                    title = "Encrypt",
+                    title = stringResource(id = R.string.encrypt),
                     onClick = {
                         showBottomSheet = true
                     },
@@ -136,7 +136,7 @@ fun ExtendedVigereCipherScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 CustomButtonTwo(
                     modifier = Modifier.fillMaxWidth(),
-                    title = "Decrypt",
+                    title = stringResource(id = R.string.decrypt),
                     onClick = {
                         showBottomSheet2 = true
                     },
@@ -150,7 +150,7 @@ fun ExtendedVigereCipherScreen(
                         showBottomSheet = false
                     },
                     isEncrypt = true,
-                    textFieldLabel = "Enter Key",
+                    textFieldLabel = stringResource(id = R.string.enter_key),
                     onClick = {uri, key ->
                         uriAndKey = mapOf(uri to key)
                         coroutineScope.launch { sheetState.hide() }
@@ -167,7 +167,7 @@ fun ExtendedVigereCipherScreen(
                         showBottomSheet2 = false
                     },
                     isEncrypt = false,
-                    textFieldLabel = "Enter Key",
+                    textFieldLabel = stringResource(id = R.string.enter_key),
                     onClick = {uri, key ->
                         uriAndKey = mapOf(uri to key)
                         coroutineScope.launch { sheetState2.hide() }
@@ -179,4 +179,3 @@ fun ExtendedVigereCipherScreen(
         }
     }
 }
-

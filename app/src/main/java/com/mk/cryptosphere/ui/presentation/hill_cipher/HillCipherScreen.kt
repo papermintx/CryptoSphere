@@ -28,11 +28,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mk.core.domain.model.ResultState
 import com.mk.cryptosphere.R
+import com.mk.cryptosphere.ui.presentation.components.BottomSheet
 import com.mk.cryptosphere.ui.presentation.components.BottomSheetHill
 import com.mk.cryptosphere.ui.presentation.components.CustomButtonTwo
 import com.mk.cryptosphere.ui.presentation.components.ErrorDialog
@@ -47,12 +49,10 @@ fun HillCipherScreen(
     onBackClick: () -> Unit
 ) {
 
-
     var showDialogResult by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
-
 
     val sheetState2 = rememberModalBottomSheetState()
     var showBottomSheet2 by remember { mutableStateOf(false) }
@@ -93,7 +93,7 @@ fun HillCipherScreen(
                 },
                 title = {
                     Text(
-                        text = "Hill Cipher",
+                        text = stringResource(id = R.string.hill_cipher),
                         modifier = Modifier.padding(8.dp),
                     )
                 }
@@ -104,7 +104,7 @@ fun HillCipherScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-        ){
+        ) {
             when(state){
                 is ResultState.Error -> {
                     val errorMessage = (state as ResultState.Error).message
@@ -114,13 +114,11 @@ fun HillCipherScreen(
                         viewModel.resetState()
                     }
                 }
-                ResultState.Idle -> {
+                ResultState.Idle -> {}
 
-                }
-                ResultState.Loading -> {
+                ResultState.Loading -> {}
 
-                }
-                is ResultState.Success ->{
+                is ResultState.Success -> {
                     val data = (state as ResultState.Success).data
                     ShowDialog(
                         showDialog = showDialogResult,
@@ -134,6 +132,7 @@ fun HillCipherScreen(
                         isDecrypt = data.isDecrypt,
                     )
                 }
+
                 ResultState.NothingData -> {}
             }
             Column(
@@ -144,7 +143,7 @@ fun HillCipherScreen(
             ) {
                 CustomButtonTwo(
                     modifier = Modifier.fillMaxWidth(),
-                    title = "Encrypt Text",
+                    title = stringResource(id = R.string.encrypt_text),
                     onClick = {
                         showBottomSheet = true
                         coroutineScope.launch {
@@ -156,7 +155,7 @@ fun HillCipherScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 CustomButtonTwo(
                     modifier = Modifier.fillMaxWidth(),
-                    title = "Decrypt Text",
+                    title = stringResource(id = R.string.decrypt_text),
                     onClick = {
                         showBottomSheet2 = true
                         coroutineScope.launch {
@@ -168,7 +167,7 @@ fun HillCipherScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 CustomButtonTwo(
                     modifier = Modifier.fillMaxWidth(),
-                    title = "Decrypt File",
+                    title = stringResource(id = R.string.decrypt_file),
                     onClick = {
                         filePickerLauncher.launch(arrayOf("text/plain"))
                     },
@@ -195,7 +194,7 @@ fun HillCipherScreen(
                         viewModel.encrypt(plaintext, arraylist)
 
                     } catch (e: Exception){
-                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getText(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
                         Log.e("Screen", "HillCipherScreen: ${e.message}")
                     }
                     coroutineScope.launch { sheetState.hide() }
@@ -223,7 +222,7 @@ fun HillCipherScreen(
                         viewModel.decrypt(plaintext, arraylist)
 
                     } catch (e: Exception){
-                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getText(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
                         Log.e("Screen", "HillCipherScreen: ${e.message}")
                     }
                     coroutineScope.launch { sheetState2.hide() }
@@ -254,7 +253,7 @@ fun HillCipherScreen(
                         viewModel.decrypt(plaintext, arraylist)
 
                     } catch (e: Exception){
-                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getText(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
                         Log.e("Screen", "HillCipherScreen: ${e.message}")
                     }
 

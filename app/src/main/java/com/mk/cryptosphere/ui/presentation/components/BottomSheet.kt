@@ -49,7 +49,7 @@ fun BottomSheet(
     textFieldLabelKey: String = "Enter Key",
     isAffineCipher: Boolean = false,
 
-) {
+    ) {
     val coroutineScope = rememberCoroutineScope()
     var textValue by remember { mutableStateOf("") }
     var textKeyValue by remember { mutableStateOf("") }
@@ -147,45 +147,45 @@ fun BottomSheet(
                     title = if (isEncrypt) "Encrypt" else "Decrypt",
                     onClick = {
                         if(isDecryptFile){
-                           if (isAffineCipher){
-                               if (ciphertextFile.isNotEmpty() && keyAValue.isNotEmpty() && keyBValue.isNotEmpty()) {
-                                   onClick(ciphertextFile, keyAValue, keyBValue)
-                                   coroutineScope.launch {
-                                       sheetState.hide()
-                                   }
-                               } else {
-                                   Toast.makeText(context, "Text and Key A and Key B must not be empty", Toast.LENGTH_SHORT).show()
-                               }
-                           } else {
-                               if (ciphertextFile.isNotEmpty() && textKeyValue.isNotEmpty()) {
-                                   onClick(ciphertextFile, textKeyValue, null)
-                                   coroutineScope.launch {
-                                       sheetState.hide()
-                                   }
-                               } else {
-                                   Toast.makeText(context, "Text and Key must not be empty", Toast.LENGTH_SHORT).show()
-                               }
-                           }
+                            if (isAffineCipher){
+                                if (ciphertextFile.isNotEmpty() && keyAValue.isNotEmpty() && keyBValue.isNotEmpty()) {
+                                    onClick(ciphertextFile, keyAValue, keyBValue)
+                                    coroutineScope.launch {
+                                        sheetState.hide()
+                                    }
+                                } else {
+                                    Toast.makeText(context, "Text and Key A and Key B must not be empty", Toast.LENGTH_SHORT).show()
+                                }
+                            } else {
+                                if (ciphertextFile.isNotEmpty() && textKeyValue.isNotEmpty()) {
+                                    onClick(ciphertextFile, textKeyValue, null)
+                                    coroutineScope.launch {
+                                        sheetState.hide()
+                                    }
+                                } else {
+                                    Toast.makeText(context, "Text and Key must not be empty", Toast.LENGTH_SHORT).show()
+                                }
+                            }
                         } else {
-                           if (isAffineCipher){
-                               if (textValue.isNotEmpty() && keyAValue.isNotEmpty() && keyBValue.isNotEmpty()) {
-                                   onClick(textValue, keyAValue, keyBValue)
-                                   coroutineScope.launch {
-                                       sheetState.hide()
-                                   }
-                               } else {
-                                   Toast.makeText(context, "Text and Key A and Key B must not be empty", Toast.LENGTH_SHORT).show()
-                               }
-                           } else {
-                               if (textValue.isNotEmpty() && textKeyValue.isNotEmpty()) {
-                                   onClick(textValue, textKeyValue, null)
-                                   coroutineScope.launch {
-                                       sheetState.hide()
-                                   }
-                               } else {
-                                   Toast.makeText(context, "Text and Key must not be empty", Toast.LENGTH_SHORT).show()
-                               }
-                           }
+                            if (isAffineCipher){
+                                if (textValue.isNotEmpty() && keyAValue.isNotEmpty() && keyBValue.isNotEmpty()) {
+                                    onClick(textValue, keyAValue, keyBValue)
+                                    coroutineScope.launch {
+                                        sheetState.hide()
+                                    }
+                                } else {
+                                    Toast.makeText(context, "Text and Key A and Key B must not be empty", Toast.LENGTH_SHORT).show()
+                                }
+                            } else {
+                                if (textValue.isNotEmpty() && textKeyValue.isNotEmpty()) {
+                                    onClick(textValue, textKeyValue, null)
+                                    coroutineScope.launch {
+                                        sheetState.hide()
+                                    }
+                                } else {
+                                    Toast.makeText(context, "Text and Key must not be empty", Toast.LENGTH_SHORT).show()
+                                }
+                            }
                         }
                     },
                     icon = R.drawable.baseline_lock_24

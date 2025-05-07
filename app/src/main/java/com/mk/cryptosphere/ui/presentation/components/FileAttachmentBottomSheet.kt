@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -27,7 +28,7 @@ import com.mk.cryptosphere.R
 @Composable
 fun FileAttachmentBottomSheet(
     showBottomSheet: Boolean,
-    sheetState : SheetState,
+    sheetState: SheetState,
     onDismiss: () -> Unit,
     isEncrypt: Boolean,
     onClick: (Uri, String) -> Unit,
@@ -44,7 +45,7 @@ fun FileAttachmentBottomSheet(
         fileUri = uri
     }
 
-    if (showBottomSheet){
+    if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = {
                 fileUri = null
@@ -72,9 +73,14 @@ fun FileAttachmentBottomSheet(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text("File Attachment", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+                Text(
+                    text = stringResource(id = R.string.file_attachment),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(modifier = Modifier.height(16.dp))
-                if (fileUri == null){
+
+                if (fileUri == null) {
                     CustomButtonTwo(
                         modifier = Modifier.fillMaxWidth(),
                         title = buttonText,
@@ -87,7 +93,7 @@ fun FileAttachmentBottomSheet(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 } else {
-                    Text("File Attached: ${fileUri?.path}")
+                    Text(text = "${stringResource(id = R.string.file_attached)}: ${fileUri?.path}")
                     Spacer(modifier = Modifier.height(8.dp))
                 }
 
@@ -104,18 +110,17 @@ fun FileAttachmentBottomSheet(
                 fileUri?.let {
                     CustomButtonTwo(
                         modifier = Modifier.fillMaxWidth(),
-                        title = if (isEncrypt) "Encrypt" else "Decrypt",
+                        title = if (isEncrypt) stringResource(id = R.string.encrypt) else stringResource(id = R.string.decrypt),
                         onClick = {
-                            if (textValue.isNotBlank()){
+                            if (textValue.isNotBlank()) {
                                 onClick(it, textValue)
                             } else {
-                                Toast.makeText(context, "Key Invalid", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context,  context.getText(R.string.key_invalid), Toast.LENGTH_SHORT).show()
                             }
                         },
                         icon = R.drawable.baseline_lock_24
                     )
                 }
-
             }
         }
     }

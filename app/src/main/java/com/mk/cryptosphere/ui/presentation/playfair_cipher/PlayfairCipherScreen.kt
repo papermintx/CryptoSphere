@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -115,7 +116,7 @@ fun PlayfairCipherScreen(
                 },
                 title = {
                     Text(
-                        text = "Playfair Cipher",
+                        text = stringResource(id = R.string.playfair_cipher),
                         modifier = Modifier.padding(8.dp),
                     )
                 }
@@ -136,12 +137,10 @@ fun PlayfairCipherScreen(
                         viewModel.resetState()
                     }
                 }
-                ResultState.Idle -> {
+                ResultState.Idle -> {}
 
-                }
-                ResultState.Loading -> {
+                ResultState.Loading -> {}
 
-                }
                 is ResultState.Success ->{
                     val data = (state as ResultState.Success).data
                     ShowDialog(
@@ -171,7 +170,7 @@ fun PlayfairCipherScreen(
             ) {
                 CustomButtonTwo(
                     modifier = Modifier.fillMaxWidth(),
-                    title = "Encrypt Text",
+                    title = stringResource(id = R.string.encrypt_text),
                     onClick = {
                         showBottomSheet = true
                         coroutineScope.launch {
@@ -183,7 +182,7 @@ fun PlayfairCipherScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 CustomButtonTwo(
                     modifier = Modifier.fillMaxWidth(),
-                    title = "Decrypt Text",
+                    title = stringResource(id = R.string.decrypt_text),
                     onClick = {
                         showBottomSheet2 = true
                         coroutineScope.launch {
@@ -195,7 +194,7 @@ fun PlayfairCipherScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 CustomButtonTwo(
                     modifier = Modifier.fillMaxWidth(),
-                    title = "Decrypt File",
+                    title = stringResource(id = R.string.decrypt_file),
                     onClick = {
                         filePickerLauncher.launch(arrayOf("text/plain"))
                     },
@@ -207,9 +206,8 @@ fun PlayfairCipherScreen(
                         .fillMaxWidth()
                 ) {
                     when(historyState){
-                        is ResultState.Loading -> {
+                        is ResultState.Loading -> {}
 
-                        }
                         is ResultState.Success -> {
                             val history = (historyState as ResultState.Success).data
                             if(history.isEmpty()){
@@ -221,7 +219,7 @@ fun PlayfairCipherScreen(
                                         verticalArrangement = Arrangement.Center
                                     ) {
                                         Text(
-                                            text = "No History",
+                                            text = stringResource(id = R.string.no_history),
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .padding(16.dp),
@@ -245,10 +243,11 @@ fun PlayfairCipherScreen(
                                 }
                             }
                         }
+
                         is ResultState.Error -> {
                             item {
                                 Text(
-                                    text = "Failed to load history",
+                                    text = stringResource(id = R.string.failed_to_load_history),
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(16.dp),
@@ -256,10 +255,11 @@ fun PlayfairCipherScreen(
                                 )
                             }
                         }
+
                         ResultState.Idle, ResultState.NothingData -> {
                             item {
                                 Text(
-                                    text = "No History",
+                                    text = stringResource(id = R.string.no_history),
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(16.dp),
@@ -269,7 +269,6 @@ fun PlayfairCipherScreen(
                         }
                     }
                 }
-
             }
 
             BottomSheet(
@@ -289,8 +288,8 @@ fun PlayfairCipherScreen(
                     showBottomSheet = false
                     showDialogResult = true
                 },
-                textFieldLabel = "Enter Plaintext",
-                textFieldLabelKey = "Enter Key"
+                textFieldLabel = stringResource(id = R.string.enter_plaintext),
+                textFieldLabelKey = stringResource(id = R.string.enter_key)
             )
 
             BottomSheet(
@@ -307,8 +306,8 @@ fun PlayfairCipherScreen(
                     showBottomSheet2 = false
                     showDialogResult = true
                 },
-                textFieldLabel = "Enter Ciphertext",
-                textFieldLabelKey = "Enter Key"
+                textFieldLabel = stringResource(id = R.string.enter_ciphertext),
+                textFieldLabelKey = stringResource(id = R.string.enter_key)
             )
 
             BottomSheet(
@@ -327,8 +326,8 @@ fun PlayfairCipherScreen(
                     showBottomSheet3 = false
                     showDialogResult = true
                 },
-                textFieldLabel = "Enter Ciphertext",
-                textFieldLabelKey = "Enter Key"
+                textFieldLabel = stringResource(id = R.string.enter_ciphertext),
+                textFieldLabelKey = stringResource(id = R.string.enter_key)
             )
         }
     }
